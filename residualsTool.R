@@ -9,17 +9,15 @@
 
 library(shiny)
 GenDataReg <- function(n,ratio,xm,xsd,ym,ysd,xmstep,xsdstep,ymstep,ysdstep){
-    # first create the predictor variables  
     newDat <- data.frame(n,ratio,xm,xsd,ym,ysd,xmstep,xsdstep,ymstep,ysdstep)
     return(newDat)
 }
-# Define UI for application that draws a histogram
+
 ui <- fluidPage(
 
     # Application title
     titlePanel("Residuals tool"),
 
-    # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
             sliderInput("n",
@@ -96,7 +94,7 @@ ui <- fluidPage(
             
         ),
 
-        # Show a plot of the generated distribution
+
         mainPanel(
             tabsetPanel(
                 tabPanel("Model Summary", DT::dataTableOutput("summary"), htmlOutput("r2")),
@@ -104,14 +102,12 @@ ui <- fluidPage(
                 tabPanel("Diagnostic Plots", plotOutput("distPlot")),
                 tabPanel("Residual Plots", plotOutput("residPlot")))
             
-           #plotOutput("mainPlot"),
-           #plotOutput("distPlot"),
-           #htmlOutput("varText")
+
         )
     )
 )
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
     myDat <- reactive({
         GenDataReg(input$n,input$ratio,input$xm,input$xsd,input$ym,input$ysd,input$xmstep,input$xsdstep,input$ymstep,input$ysdstep)
@@ -193,13 +189,11 @@ server <- function(input, output) {
     })
     output$summary <- DT::renderDataTable({
       round(as.data.frame(summary(MyReg())$coefficients),3)
-      
-        #includeHTML("regtable.html")
+
     }, options = list(dom = 't'))
     output$r2 <- renderText({
       paste("R-squared:",round(as.data.frame(summary(MyReg())$r.squared),3))
-      
-      #includeHTML("regtable.html")
+
     })
 }
 
